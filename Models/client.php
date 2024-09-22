@@ -1,6 +1,6 @@
 <?php
 require_once 'Core/db.php';
-class Product
+class client
 {
     private $db;
 
@@ -12,10 +12,10 @@ class Product
         }
     }
 
-    public function getAllProducts()
+    public function getAllClients()
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM tbl_product");
+            $stmt = $this->db->query("SELECT * FROM tbl_client");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -23,25 +23,14 @@ class Product
         }
     }
 
-    public function getLastAdded()
-    {
-        try {
-            $stmt = $this->db->query("SELECT * FROM tbl_product ORDER BY PROD_CREATED_AT DESC LIMIT 6");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
-
-    public function getProductById($id)
+    public function getClientById($id)
     {
         if (!is_numeric($id)) {
-            throw new InvalidArgumentException("El ID del producto debe ser un número.");
+            throw new InvalidArgumentException("El ID del cliente debe ser un número.");
         }
 
         try {
-            $stmt = $this->db->prepare("SELECT * FROM tbl_product WHERE PROD_ID = :id");
+            $stmt = $this->db->prepare("SELECT * FROM tbl_client WHERE CLI_ID = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
@@ -61,37 +50,38 @@ class Product
         }
     }
 
-    public function createProduct($product)
+    public function createClient($client)
     {
-        if (empty($product['name']) || empty($product['description'])) {
-            throw new InvalidArgumentException("El nombre del producto y la descripción son obligatorios");
+        if (empty($client['email']) || empty($client['rnc'])) {
+            throw new InvalidArgumentException("El RNC, el nombre y el correo electrónico del cliente son obligatorios.");
         }
-
-
+    
         try {
-            $stmt = $this->db->prepare("INSERT INTO tbl_product (PROD_NAME, PROD_DESCRIPTION, PROD_IMAGE_URL, PROD_UNIT_PRICE, PROD_AVAILABLE) VALUES (:name, :description, :image, :price, :available)");
-
-            $stmt->bindParam(':name', $product['name']);
-            $stmt->bindParam(':description', $product['description']);
-            $stmt->bindParam(':image', $product['image']);
-            $stmt->bindParam(':price', $product['price']);
-            $stmt->bindParam(':available', $product['available']);
+            $stmt = $this->db->prepare("INSERT INTO tbl_client (CLI_NAME, CLI_LAST_NAME, CLI_RNC, CLI_EMAIL, CLI_ADDRESS) VALUES (:name, :last_name, :rnc, :email, :address)");
+    
+            $stmt->bindParam(':name', $client['name']);
+            $stmt->bindParam(':last_name', $client['last_name']);
+            $stmt->bindParam(':rnc', $client['rnc']);
+            $stmt->bindParam(':email', $client['email']);
+            $stmt->bindParam(':address', $client['address']);
+    
             $stmt->execute();
-            return true;
+    
+            return $this->db->lastInsertId();
         } catch (Exception $e) {
             error_log("Error al insertar cliente: " . $e->getMessage());
             return false;
         }
     }
-
-    public function deleteProductById($id)
+    
+    public function deleteClientById($id)
     {
         if (!filter_var($id, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) {
-            throw new InvalidArgumentException("El ID del producto debe ser un número entero positivo.");
+            throw new InvalidArgumentException("El ID del cliente debe ser un número entero positivo.");
         }
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM tbl_product WHERE `tbl_product`.`PROD_ID` = :id");
+            $stmt = $this->db->prepare("DELETE FROM tbl_client WHERE `tbl_client`.`CLI_ID` = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
@@ -101,15 +91,15 @@ class Product
                 return false;
             }
         } catch (Exception $e) {
-            error_log("Error al eliminar producto: " . $e->getMessage());
+            error_log("Error al eliminar cliente: " . $e->getMessage());
             return false;
         }
     }
 
-    public function updateProductById($id, $newValues)
+    public function updateClientById($id, $newValues)
     {
         if (!is_numeric($id)) {
-            throw new InvalidArgumentException("El ID del producto debe ser un número.");
+            throw new InvalidArgumentException("El ID del cliente debe ser un número.");
         }
 
         $fields = [];
@@ -119,7 +109,7 @@ class Product
         $fieldsList = implode(', ', $fields);
 
         try {
-            $stmt = $this->db->prepare("UPDATE tbl_product SET {$fieldsList} WHERE prod_id = :id");
+            $stmt = $this->db->prepare("UPDATE tbl_client SET {$fieldsList} WHERE CLI_ID = :id");
 
             foreach ($newValues as $column => $value) {
                 $stmt->bindValue(":$column", $value);

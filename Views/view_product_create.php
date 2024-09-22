@@ -5,8 +5,9 @@
     <link rel="icon" href="Views/Assets/Logo.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Cliente</title>
+    <title>Registrar Producto</title>
     <link rel="stylesheet" href="Public/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.6/inputmask.min.js"></script>
     <style>
         body {
             background-image: url('Views/Assets/Background-static-forms.png');
@@ -26,7 +27,7 @@
             max-width: 600px;
             margin-top: 50px;
             padding: 30px;
-            background-color: #fff;
+            background-color: #ffffff;
             border-radius: 12px;
         }
 
@@ -88,38 +89,50 @@
 <body>
     <?php include 'C_navbar.php'; ?>
     <div class="container">
-        <h1 class="text-center mb-4">Registrar Cliente</h1>
-        <form action="index.php?controller=Client&action=create" method="post">
+        <h1 class="text-center mb-4">Registrar Producto</h1>
+        <form action="index.php?controller=Product&action=create" method="post">
             <div class="form-group">
-                <label for="rnc">RNC:</label>
-                <input type="text" maxlength="10" class="form-control" id="rnc" name="rnc" placeholder="Ingrese el RNC" required>
+                <label for="name">Nombre del Producto:</label>
+                <input type="text" maxlength="255" class="form-control" id="name" name="name" placeholder="Ingrese el nombre del producto" maxlength="50" required>
             </div>
 
             <div class="form-group">
-                <label for="name">Nombre:</label>
-                <input type="text" maxlength="64" class="form-control" id="name" name="name" placeholder="Ingrese el nombre" required>
+                <label for="description">Descripción del Producto:</label>
+                <textarea class="form-control" style="resize: none;" maxlength="255" id="description" name="description" rows="5" placeholder="Ingrese una descripción del producto" maxlength="500" required></textarea>
             </div>
 
             <div class="form-group">
-                <label for="last_name">Apellido:</label>
-                <input type="text" maxlength="64" class="form-control" id="last_name" name="last_name" placeholder="Ingrese el apellido" required>
+                <label for="price">Precio Unitario:</label>
+                <input type="text" maxlength="15" class="form-control" required id="price" name="price" value=<?php
+                                                                                                                $formatter = new NumberFormatter('es_DO', NumberFormatter::CURRENCY);
+                                                                                                                echo htmlspecialchars($formatter->formatCurrency("0.00", 'DOP'));
+                                                                                                                ?>>
             </div>
 
             <div class="form-group">
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" maxlength="255" class="form-control" id="email" name="email" placeholder="Ingrese el correo electrónico" required>
-            </div>
-
-            <div class="form-group">
-                <label for="address">Dirección:</label>
-                <input type="text" maxlength="255" class="form-control" id="address" name="address" placeholder="Ingrese la dirección" required>
+                <label for="image">Imagen en URL:</label>
+                <input type="url" class="form-control" id="image" name="image" placeholder="https://image_example.com">
             </div>
 
             <div class="text-center pt-3">
-                <button type="submit" class="btn-submit">Registrar Cliente</button>
+                <button type="submit" class="btn-submit">Registrar Producto</button>
             </div>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var inputElement = document.getElementById("price");
+            var mask = new Inputmask("currency", {
+                radixPoint: ".",
+                groupSeparator: ",",
+                prefix: "RD$ ",
+                digits: 2,
+                autoGroup: true,
+                removeMaskOnSubmit: true
+            });
+            mask.mask(inputElement);
+        });
+    </script>
 </body>
 
 </html>

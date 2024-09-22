@@ -5,7 +5,7 @@
     <link rel="icon" href="Views/Assets/Logo.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Cliente</title>
+    <title>Registrar Movimiento</title>
     <link rel="stylesheet" href="Public/css/bootstrap.min.css">
     <style>
         body {
@@ -88,35 +88,40 @@
 <body>
     <?php include 'C_navbar.php'; ?>
     <div class="container">
-        <h1 class="text-center mb-4">Registrar Cliente</h1>
-        <form action="index.php?controller=Client&action=create" method="post">
+        <h1 class="text-center mb-4">Registrar Movimiento</h1>
+        <form action="index.php?controller=Inventory&action=create" method="post">
             <div class="form-group">
-                <label for="rnc">RNC:</label>
-                <input type="text" maxlength="10" class="form-control" id="rnc" name="rnc" placeholder="Ingrese el RNC" required>
+                <label for="operation" class="form-label">Operación:</label>
+                <select id="operation" class="form-select" name="operation" required>
+                    <?php if (isset($operation) && count($operation) > 0): ?>
+                        <?php foreach ($operation as $row): ?>
+                            <?php if ($row['OP_ID'] !== 2 && $row['OP_ID'] !== 3): ?>
+                                <option value="<?php echo htmlspecialchars($row['OP_ID']) ?>"><?php echo htmlspecialchars($row['OP_ID'] . " : " . $row['OP_NAME']); ?></option>
+                            <?php endif ?>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                </select>
             </div>
-
             <div class="form-group">
-                <label for="name">Nombre:</label>
-                <input type="text" maxlength="64" class="form-control" id="name" name="name" placeholder="Ingrese el nombre" required>
+                <label for="product" class="form-label">Product:</label>
+                <select id="product" class="form-select" name="product" required>
+                    <?php if (isset($product) && count($product) > 0): ?>
+                        <?php foreach ($product as $row): ?>
+                            <option value="<?php echo htmlspecialchars($row['PROD_ID']) ?>"><?php echo htmlspecialchars($row['PROD_ID'] . " : " . $row['PROD_NAME']); ?></option>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                </select>
             </div>
-
             <div class="form-group">
-                <label for="last_name">Apellido:</label>
-                <input type="text" maxlength="64" class="form-control" id="last_name" name="last_name" placeholder="Ingrese el apellido" required>
+                <label for="quantity">Cantidad:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Ingrese la cantidad" required>
             </div>
-
             <div class="form-group">
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" maxlength="255" class="form-control" id="email" name="email" placeholder="Ingrese el correo electrónico" required>
+                <label for="created_at">Fecha/Hora Movimiento:</label>
+                <input type="datetime-local" class="form-control" id="created_at" name="created_at">
             </div>
-
-            <div class="form-group">
-                <label for="address">Dirección:</label>
-                <input type="text" maxlength="255" class="form-control" id="address" name="address" placeholder="Ingrese la dirección" required>
-            </div>
-
             <div class="text-center pt-3">
-                <button type="submit" class="btn-submit">Registrar Cliente</button>
+                <button type="submit" class="btn-submit">Registrar Movimiento</button>
             </div>
         </form>
     </div>

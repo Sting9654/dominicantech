@@ -9,7 +9,7 @@ class Db
     private function __construct()
     {
         $dbParams = getDbParams();
-        $dsn = "mysql:host={$dbParams['DB_HOST']};dbname={$dbParams['DB_NAME']};charset=utf8";
+        $dsn = "mysql:host={$dbParams['DB_HOST']};dbname={$dbParams['DB_NAME']};charset={$dbParams['DB_CHARSET']}";
 
         try {
             $this->conn = new PDO($dsn, $dbParams['DB_USERNAME'], $dbParams['DB_PASSWORD']);
